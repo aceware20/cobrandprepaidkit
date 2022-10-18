@@ -1,0 +1,147 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 32
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+publishing{
+    publications{
+        maven(MavenPublication)
+                {
+                    groupId 'com.aceware.cobrandprepaidkit'
+                    artifactId 'cobrandprepaidkit'
+                    version '1.0'
+                    artifact "$buildDir/outputs/aar/cobrandprepaidkit-release.aar"
+                    pom.withXml
+                            {
+                                def dependenciesNode = asNode().appendNode("dependencies")
+                                configurations.api.allDependencies.each{dependency->
+                                    def dependencyNode=dependenciesNode.appendNode('dependency')
+                                    dependencyNode.appendNode('groupId',dependency.group)
+                                    dependencyNode.appendNode('artifactId',dependency.name)
+                                    dependencyNode.appendNode('version',dependency.version)
+
+                                }
+                            }
+                }
+    }
+            repositories {
+            maven {
+                url "$buildDir/repo"
+            }
+        }
+}
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            release(MavenPublication) {
+////                from components.java
+////                from components.release
+//                groupId="com.indiantechie.testsdk"
+//                artifactId="testsdk"
+//                version= "1.0"
+//
+//                artifact(bundleReleaseAar)
+////                artifacts = ["build/outputs/aar/library-release.aar"]
+////                pom.withXml {
+////                    def dependencies = asNode().appendNode("dependencies")
+////                    configurations.api.allDependencies.each {
+////                        def dependency = dependencies.appendNode("dependency")
+////                        print(it.group)
+////                        dependency.appendNode("groupId", it.group)
+////                        dependency.appendNode("artifactId", it.name)
+////                        dependency.appendNode("version", it.version)
+////                    }
+//
+//                pom.withXml {
+//                    final dependenciesNode = asNode().appendNode('dependencies')
+//
+//                    ext.addDependency = { Dependency dep, String scope ->
+//                        if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+//                            return // ignore invalid dependencies
+//
+//                        final dependencyNode = dependenciesNode.appendNode('dependency')
+//                        dependencyNode.appendNode('groupId', dep.group)
+//                        dependencyNode.appendNode('artifactId', dep.name)
+//                        dependencyNode.appendNode('version', dep.version)
+//                        dependencyNode.appendNode('scope', scope)
+//
+//                        if (!dep.transitive) {
+//                            // If this dependency is transitive, we should force exclude all its dependencies them from the POM
+//                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+//                            exclusionNode.appendNode('groupId', '*')
+//                            exclusionNode.appendNode('artifactId', '*')
+//                        } else if (!dep.properties.excludeRules.empty) {
+//                            // Otherwise add specified exclude rules
+//                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+//                            dep.properties.excludeRules.each { ExcludeRule rule ->
+//                                exclusionNode.appendNode('groupId', rule.group ?: '*')
+//                                exclusionNode.appendNode('artifactId', rule.module ?: '*')
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//    }
+//}
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            release(MavenPublication) {
+//                from components.release
+//            }
+//            debug(MavenPublication) {
+//                from components.debug
+//            }
+//        }
+//        // note repositories goes under publishing
+//        repositories {
+//            maven {
+//                url = "file://$projectDir/deploy"
+//            }
+//        }
+//    }
+//}
+
+
+dependencies {
+
+    api 'androidx.appcompat:appcompat:1.5.1'
+    api 'com.google.android.material:material:1.6.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    api 'com.squareup.retrofit2:retrofit:2.8.1'
+    api 'com.squareup.retrofit2:converter-gson:2.4.0'
+    api 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    api 'com.squareup.okhttp3:okhttp:4.0.1'
+    api 'com.google.code.gson:gson:2.8.6'
+
+
+}
