@@ -110,19 +110,7 @@ android {
 //        }
 //}
 
-publishing
-        {
-            publications{
-                release(MavenPublication)
-                        {
-                            from components.release
-                            groupId='com.aceneobank'
-                            artifactId='cobrandprepaidkit'
-                            version='1.0'
 
-                        }
-            }
-        }
 
 
 dependencies {
@@ -139,4 +127,20 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.6'
 
 
+}
+
+afterEvaluate {
+    publishing
+            {
+                publications{
+                    release(MavenPublication)
+                            {
+                                from components.release
+                                groupId='com.aceneobank'
+                                artifactId='cobrandprepaidkit'
+                                version='1.0'
+
+                            }
+                }
+            }
 }
