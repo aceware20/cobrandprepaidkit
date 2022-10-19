@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
-}
 
+}
 android {
     compileSdk 32
 
@@ -27,107 +27,102 @@ android {
     }
 
 }
+//java {
+//    withJavadocJar()
+//    withSourcesJar()
+//}
 
-publishing{
-    publications{
-        maven(MavenPublication)
-                {
-                    groupId 'com.aceware.cobrandprepaidkit'
-                    artifactId 'cobrandprepaidkit'
-                    version '1.0'
-                    artifact "$buildDir/outputs/aar/cobrandprepaidkit-release.aar"
-                    pom.withXml
-                            {
-                                def dependenciesNode = asNode().appendNode("dependencies")
-                                configurations.api.allDependencies.each{dependency->
-                                    def dependencyNode=dependenciesNode.appendNode('dependency')
-                                    dependencyNode.appendNode('groupId',dependency.group)
-                                    dependencyNode.appendNode('artifactId',dependency.name)
-                                    dependencyNode.appendNode('version',dependency.version)
 
-                                }
-                            }
-                }
-    }
-            repositories {
-            maven {
-                url "$buildDir/repo"
+//publishing {
+//    publications {
+//
+//        mavenJava(MavenPublication) {
+//
+//            groupId = 'com.aceneobank'
+//            artifactId = 'cobrandprepaidkit'
+//            version = '1.0'
+//
+//            pom {
+//                name = 'cobrandprepaidkit'
+//                description = 'cobrandprepaidkit is an  library which has implemented for prepaid card'
+//                url = 'https://Ashin97@bitbucket.org/ashindasaceware/cobrandprepaidkit.git'
+//                inceptionYear = '2022'
+//
+//                licenses {
+//                    license {
+//                        name = 'MIT License'
+//                        url = 'http://www.opensource.org/licenses/mit-license.php'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id = 'ashindas'
+//                        name = 'ashindas'
+//                        email = 'ashindas@acewaretechnology.com'
+//                    }
+//                }
+//
+//            }
+//        }
+//    }
+//        repositories {
+//        maven {
+//            name = "OSSRH"
+//            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+//            credentials {
+//                username = project.properties["ossrhUsername"]
+//                password = project.properties["ossrhPassword"]
+//            }
+//        }
+//    }
+//}
+
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}
+
+//publishing{
+//    publications{
+//        maven(MavenPublication)
+//                {
+//                    groupId 'com.aceneobank'
+//                    artifactId 'cobrandprepaidkit'
+//                    version '1.0'
+//                    artifact "$buildDir/outputs/aar/cobrandprepaidkit-release.aar"
+//                    pom.withXml
+//                            {
+//                                def dependenciesNode = asNode().appendNode("dependencies")
+//                                configurations.api.allDependencies.each{dependency->
+//                                    def dependencyNode=dependenciesNode.appendNode('dependency')
+//                                    dependencyNode.appendNode('groupId',dependency.group)
+//                                    dependencyNode.appendNode('artifactId',dependency.name)
+//                                    dependencyNode.appendNode('version',dependency.version)
+//
+//                                }
+//                            }
+//                }
+//    }
+//            repositories {
+//            maven {
+//                url "$buildDir/repo"
+//            }
+//        }
+//}
+
+publishing
+        {
+            publications{
+                release(MavenPublication)
+                        {
+                            from components.release
+                            groupId='com.aceneobank'
+                            artifactId='cobrandprepaidkit'
+                            version='1.0'
+
+                        }
             }
         }
-}
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            release(MavenPublication) {
-////                from components.java
-////                from components.release
-//                groupId="com.indiantechie.testsdk"
-//                artifactId="testsdk"
-//                version= "1.0"
-//
-//                artifact(bundleReleaseAar)
-////                artifacts = ["build/outputs/aar/library-release.aar"]
-////                pom.withXml {
-////                    def dependencies = asNode().appendNode("dependencies")
-////                    configurations.api.allDependencies.each {
-////                        def dependency = dependencies.appendNode("dependency")
-////                        print(it.group)
-////                        dependency.appendNode("groupId", it.group)
-////                        dependency.appendNode("artifactId", it.name)
-////                        dependency.appendNode("version", it.version)
-////                    }
-//
-//                pom.withXml {
-//                    final dependenciesNode = asNode().appendNode('dependencies')
-//
-//                    ext.addDependency = { Dependency dep, String scope ->
-//                        if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
-//                            return // ignore invalid dependencies
-//
-//                        final dependencyNode = dependenciesNode.appendNode('dependency')
-//                        dependencyNode.appendNode('groupId', dep.group)
-//                        dependencyNode.appendNode('artifactId', dep.name)
-//                        dependencyNode.appendNode('version', dep.version)
-//                        dependencyNode.appendNode('scope', scope)
-//
-//                        if (!dep.transitive) {
-//                            // If this dependency is transitive, we should force exclude all its dependencies them from the POM
-//                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-//                            exclusionNode.appendNode('groupId', '*')
-//                            exclusionNode.appendNode('artifactId', '*')
-//                        } else if (!dep.properties.excludeRules.empty) {
-//                            // Otherwise add specified exclude rules
-//                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-//                            dep.properties.excludeRules.each { ExcludeRule rule ->
-//                                exclusionNode.appendNode('groupId', rule.group ?: '*')
-//                                exclusionNode.appendNode('artifactId', rule.module ?: '*')
-//                            }
-//                        }
-//                    }
-//
-//                }
-//            }
-//        }
-//    }
-//}
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            release(MavenPublication) {
-//                from components.release
-//            }
-//            debug(MavenPublication) {
-//                from components.debug
-//            }
-//        }
-//        // note repositories goes under publishing
-//        repositories {
-//            maven {
-//                url = "file://$projectDir/deploy"
-//            }
-//        }
-//    }
-//}
 
 
 dependencies {
