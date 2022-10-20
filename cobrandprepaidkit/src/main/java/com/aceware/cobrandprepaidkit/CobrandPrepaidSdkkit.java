@@ -7,6 +7,9 @@ import android.widget.Toast;
 import com.aceware.cobrandprepaidkit.api.ApiManager;
 import com.aceware.cobrandprepaidkit.api.FirstManager;
 import com.aceware.cobrandprepaidkit.model.ApiListRes;
+import com.aceware.cobrandprepaidkit.model.ErrorMsg;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,14 +36,29 @@ public class CobrandPrepaidSdkkit {
     public CobrandPrepaidSdkkit(Context context) {
         this.context = context;
 //        savedRes=PreferenceManager.getInstance().getApiList(context);
-        getApiList();
+        new Thread(()->{
+            getApiList();
+        }).start();
+
     }
+//    public init(Context context) {
+//        this.context = context;
+////        savedRes=PreferenceManager.getInstance().getApiList(context);
+//        new Thread(()->{
+//            getApiList();
+//        }).start();
+//
+//    }
 
 
-    public void getApiList()
+    private void getApiList()
     {
         JSONObject object=new JSONObject();
-        Call<ApiListRes>call= FirstManager.getService().getApiList("c17e7d27-4769-41a0-b675-f97d0f208863");
+        HashMap<String,String>map=new HashMap<>();
+        map.put("agent_email","sruthys240@gmail.com");
+        map.put("mpin","123456");
+        map.put("username","ashin");
+        Call<ApiListRes>call= FirstManager.getService().getApiList("api/login-sdk-mpin",map);
         call.enqueue(new Callback<ApiListRes>() {
             @Override
             public void onResponse(Call<ApiListRes> call, Response<ApiListRes> response) {
@@ -87,7 +105,7 @@ public class CobrandPrepaidSdkkit {
             Toast.makeText(context,"invalid input", Toast.LENGTH_SHORT).show();
         }
     }
-    public void call(String api, ArrayList<String> map, ArrayList<String> input)
+    private void call(String api, ArrayList<String> map, ArrayList<String> input)
     {
         HashMap<String,String>map1=new HashMap<>();
         for (int i=0;i<map.size();i++)
@@ -95,31 +113,53 @@ public class CobrandPrepaidSdkkit {
             map1.put(map.get(i),input.get(i));
         }
         try {
-            Call<JSONObject>call=ApiManager.getService(context).postapi(api,map1);
-            call.enqueue(new Callback<JSONObject>() {
+            Call<JsonObject>call=ApiManager.getService(context).postapi(api,map1);
+            call.enqueue(new Callback<JsonObject>() {
                 @Override
-                public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     if(response.isSuccessful()&& response.body()!=null)
                     {
+                        //                            JSONObject jsonSuccess=new JSONObject(response.body()..toString());
+                        Log.d("sucess-data",new Gson().toJson(response.body()));
                         responseListener.onSuccess(response.body());
-                    }
-                    else
-                    {
-                        try {
-
-                            JSONObject jObjError = new JSONObject(response.errorBody().string());
-                            responseListener.onFailure(jObjError);
-                        } catch (JSONException | IOException e) {
-                            e.printStackTrace();
-                        }
-//                        Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
 
                     }
+//                    else
+//                    {
+//
+//
+////                        try {
+////
+////                            JsonObject jObjError = new JsonObject(response.body());
+////                            responseListener.onFailure(jObjError);
+////                        } catch (JSONException | IOException e) {
+////                            e.printStackTrace();
+////                        }
+////                        Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
+//
+//                    }
                 }
 
                 @Override
-                public void onFailure(Call<JSONObject> call, Throwable t) {
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    JsonObject object = new Gson().fromJson(t.getMessage(), JsonObject.class);
+                    Log.d("fail-data",new Gson().toJson(object));
+                    responseListener.onFailure(object);
+
+//                      String msg=t.getMessage();
+//                      ErrorMsg errorMsg=new ErrorMsg();
+//                      errorMsg.setMessage(msg);
+//                      new Gson().toJson(errorMsg);
+//                      JsonObject jsonObject=new JsonObject();
+//                      jsonObject.
 //                    responseListener.onFailure(response.body());
+//                    try {
+////                        JsonObject object=new JsonObject(t.getMessage());
+////                        responseListener.onFailure(object);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+
                 }
             });
         }
@@ -131,8 +171,8 @@ public class CobrandPrepaidSdkkit {
     }
     public interface ResponseListener
     {
-        void onSuccess(JSONObject object);
-        void onFailure(JSONObject object);
+        void onSuccess(JsonObject object);
+        void onFailure(JsonObject object);
     }
 
 

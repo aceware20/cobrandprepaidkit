@@ -1,7 +1,7 @@
 package com.aceware.cobrandprepaidkit.api;
 
 public interface IAPIConstants {
-    public static String BASEURL_FIRST= "https://mocki.io/v1/";
+    public static String BASEURL_FIRST= "https://aceneobank.dev.acepe.co.in/";
     public static String BASEURLTWO="https://reqres.in/api/";
     String API="";
     //"http://restapi.adequateshop.com/"

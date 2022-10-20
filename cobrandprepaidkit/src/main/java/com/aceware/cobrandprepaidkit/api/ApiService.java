@@ -5,6 +5,7 @@ package com.aceware.cobrandprepaidkit.api;
 
 
 import com.aceware.cobrandprepaidkit.model.ApiListRes;
+import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -20,11 +21,11 @@ import retrofit2.http.Url;
 public interface ApiService {
     @FormUrlEncoded
     @POST()
-    Call<JSONObject> postapi(@Url String api, @FieldMap HashMap<String,String>map);
+    Call<JsonObject> postapi(@Url String api, @FieldMap HashMap<String,String>map);
 
 
-
-    @GET()
-    Call<ApiListRes>getApiList(@Url String api);
+    @FormUrlEncoded
+    @POST()
+    Call<ApiListRes>getApiList(@Url String api,@FieldMap HashMap<String,String>map);
 
 }

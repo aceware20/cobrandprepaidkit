@@ -9,7 +9,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.aceware.cobrandprepaidkit.databinding.ActivityMainBinding;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -34,18 +37,19 @@ public class MainActivity extends AppCompatActivity {
                     map.add("ashindaschandroth97@gmail.com");
                     map.add("123456");
                     Log.d("inputsize",String.valueOf(map.size()));
-                    testsdk.initApi("register",map);
+                    testsdk.initApi("login",map);
 
             }
         });
         testsdk.setResponseCall(new CobrandPrepaidSdkkit.ResponseListener() {
             @Override
-            public void onSuccess(JSONObject object) {
-                Toast.makeText(activity,object.toString(), Toast.LENGTH_SHORT).show();
+            public void onSuccess(JsonObject object) {
+//                Toast.makeText(activity,new Gson().toJson(object).toString(), Toast.LENGTH_SHORT).show();
+                Log.d("success",object.toString());
             }
 
             @Override
-            public void onFailure(JSONObject object) {
+            public void onFailure(JsonObject object) {
                 Toast.makeText(activity,object.toString(), Toast.LENGTH_SHORT).show();
             }
         });
